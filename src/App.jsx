@@ -47,7 +47,7 @@ function App()
   <>
   <h1>Tik Tak Toe</h1>
   <div className='center-matrix'>
-    <TurnIndicator symbol='×' flash={turn} winner={winner && turn} />
+    <TurnIndicator symbol='×' flash={turn} winner={winner && !turn} />
     <div className='matrix'>
     {
     matrix.map((symbol, index) => (
@@ -60,7 +60,7 @@ function App()
     ))
     }
     </div>
-  <TurnIndicator symbol='o' flash={!turn} winner={winner && !turn} />
+  <TurnIndicator symbol='o' flash={!turn} winner={winner && turn} />
   </div>
   <footer>
     <h3>
