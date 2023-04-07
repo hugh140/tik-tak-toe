@@ -37,6 +37,13 @@ io.on("connection", (socket) => {
     serverWin = data.detectVictory;
     io.emit("matrix-turn-winner", { serverMatrix, serverTurn, serverWin });
   });
+
+  socket.on("reset-game", () => {
+    serverMatrix = Array(9).fill(null);
+    serverWin = false;
+    serverTurn = Math.random() > 0.5 ? true : false;
+    io.emit("matrix-turn-winner", { serverTurn, serverMatrix, serverWin });
+  });
 });
 
 server.listen(3000, () => {

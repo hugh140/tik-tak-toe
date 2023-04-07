@@ -33,17 +33,15 @@ function App() {
   }
 
   function reset() {
-    setMatrix(Array(9).fill(null));
-    setWinner(false);
+    socket.emit("reset-game");
   }
 
   function disabledButtons() {
     const symbol = turn ? "×" : "o";
-    console.log(symbol)
+    console.log(symbol);
 
     if (playerMode !== "spectator" && playerMode === symbol) return false;
     return true;
-
   }
 
   function VictoryMessage() {
