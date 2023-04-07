@@ -13,31 +13,37 @@ function App() {
   const [playerMode, setPlayerMode] = useState("");
 
   useEffect(() => {
-    socket.on("playerMode", (data) => setPlayerMode(data))
-    socket.on("matrix-turn", (data) => {
+    socket.on("playerMode", (data) => setPlayerMode(data));
+    socket.on("matrix-turn-winner", (data) => {
       setTurn(data.serverTurn);
       setMatrix(data.serverMatrix);
-      console.log(data);
+      setWinner(data.serverWin);
     });
-  });
+  }, []);
 
   function playerTurn(index) {
     const newMatrix = [...matrix];
     if (newMatrix[index] || winner || winner === null) return;
 
     const symbol = turn ? "×" : "o";
+
     newMatrix[index] = symbol;
-
-    setTurn(!turn);
-    setMatrix(newMatrix);
-    socket.emit("matrix-turn", { newMatrix, turn });
-
-    setWinner(victory(symbol, newMatrix));
+    const detectVictory = victory(symbol, newMatrix);
+    socket.emit("matrix-turn-winner", { newMatrix, turn, detectVictory });
   }
 
   function reset() {
     setMatrix(Array(9).fill(null));
     setWinner(false);
+  }
+
+  function disabledButtons() {
+    const symbol = turn ? "×" : "o";
+    console.log(symbol)
+
+    if (playerMode !== "spectator" && playerMode === symbol) return false;
+    return true;
+
   }
 
   function VictoryMessage() {
@@ -57,7 +63,7 @@ function App() {
   return (
     <>
       <h1>Tik Tak Toe</h1>
-      <h3>{playerMode}</h3>
+      <h3>You are: {playerMode}</h3>
       <div className="center-matrix">
         <TurnIndicator symbol="×" flash={turn} winner={winner && !turn} />
         <div className="matrix">
@@ -67,6 +73,7 @@ function App() {
               index={index}
               symbol={matrix[index]}
               onClick={playerTurn}
+              disabled={disabledButtons}
             />
           ))}
         </div>
